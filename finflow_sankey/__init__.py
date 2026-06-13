@@ -8,14 +8,8 @@ from typing import Any
 import polars as pl
 
 from finflow_sankey.core.mapper import AccountMapper
-from finflow_sankey.core.palette import ColorPalette
 from finflow_sankey.core.pipeline import SankeyPipeline
 from finflow_sankey.templates.income_statement import IncomeStatementTemplate
-
-
-SankeyData = pl.DataFrame | pl.LazyFrame
-SankeyMapping = AccountMapper | dict[str, Any] | str | Path | None
-SankeyPalette = ColorPalette | dict[str, Any] | str | Path | None
 
 
 class FinancialSankey:
@@ -24,11 +18,11 @@ class FinancialSankey:
     @classmethod
     def income_statement(
         cls,
-        data: SankeyData,
+        data: pl.DataFrame | pl.LazyFrame,
         *,
         period: str | None = None,
         currency: str | None = None,
-        mapping: SankeyMapping = None,
+        mapping: AccountMapper | dict[str, Any] | str | Path | None = None,
     ) -> SankeyPipeline:
         """Create an income statement Sankey pipeline."""
         template = IncomeStatementTemplate()
@@ -43,11 +37,11 @@ class FinancialSankey:
     @classmethod
     def cash_flow_statement(
         cls,
-        data: SankeyData,
+        data: pl.DataFrame | pl.LazyFrame,
         *,
         period: str | None = None,
         currency: str | None = None,
-        mapping: SankeyMapping = None,
+        mapping: AccountMapper | dict[str, Any] | str | Path | None = None,
     ) -> SankeyPipeline:
         """Create a cash flow statement Sankey pipeline."""
         from finflow_sankey.templates.cash_flow import CashFlowStatementTemplate
@@ -64,11 +58,11 @@ class FinancialSankey:
     @classmethod
     def balance_sheet_reconciliation(
         cls,
-        data: SankeyData,
+        data: pl.DataFrame | pl.LazyFrame,
         *,
         as_of: str | None = None,
         currency: str | None = None,
-        mapping: SankeyMapping = None,
+        mapping: AccountMapper | dict[str, Any] | str | Path | None = None,
     ) -> SankeyPipeline:
         """Create a balance sheet reconciliation Sankey pipeline."""
         from finflow_sankey.templates.balance_sheet import BalanceSheetReconciliationTemplate
@@ -85,10 +79,10 @@ class FinancialSankey:
     @classmethod
     def multi_period_compare(
         cls,
-        data: SankeyData,
+        data: pl.DataFrame | pl.LazyFrame,
         *,
         currency: str | None = None,
-        mapping: SankeyMapping = None,
+        mapping: AccountMapper | dict[str, Any] | str | Path | None = None,
     ) -> SankeyPipeline:
         """Create a multi-period comparison Sankey pipeline."""
         from finflow_sankey.templates.multi_period import MultiPeriodComparisonTemplate
