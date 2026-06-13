@@ -1,7 +1,7 @@
 site_name: FinFlow Sankey
 site_description: Polars-first financial statement Sankey visualization library
-site_url: https://finflow.github.io/finflow-sankey
-repo_url: https://github.com/finflow/finflow-sankey
+site_url: https://min9lin9.github.io/finflow-sankey
+repo_url: https://github.com/min9lin9/finflow-sankey
 repo_name: finflow-sankey
 
 theme:

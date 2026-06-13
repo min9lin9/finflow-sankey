@@ -176,6 +176,12 @@ fig = FinancialSankey.income_statement(df).validate().render(
 ## Installation
 
 ```bash
+pip install finflow-sankey
+```
+
+## Development
+
+```bash
 pip install -e ".[dev]"
 ```
 
@@ -195,7 +201,6 @@ finflow_sankey/
   renderers/      # plotly renderer
   palettes/       # YAML color palettes
   mappings/       # YAML account mappings
-  adapters/       # pandas adapter
   examples/       # usage examples
 tests/            # pytest suite
 ```
