@@ -1,31 +1,33 @@
 name: "monochrome"
 version: "1.0.0"
-description: "Grayscale palette optimized for print"
+description: "Single hue monochrome blue palette"
 roles:
-  revenue: "#374151"
-  cost_of_revenue: "#6B7280"
-  operating_expenses: "#4B5563"
-  non_operating_items: "#9CA3AF"
-  tax: "#4B5563"
-  profit: "#111827"
-  net_income: "#111827"
-  cash_inflow: "#374151"
-  cash_outflow: "#4B5563"
-  cash_balance: "#111827"
-  asset: "#111827"
-  liability: "#374151"
-  equity: "#4B5563"
-  other: "#9CA3AF"
+  revenue: "#1E40AF"
+  cost_of_revenue: "#3B82F6"
+  operating_expenses: "#60A5FA"
+  non_operating_items: "#93C5FD"
+  tax: "#2563EB"
+  profit: "#1E3A8A"
+  net_income: "#1E3A8A"
+  gross_profit: "#2563EB"
+  operating_income: "#3B82F6"
+  cash_inflow: "#1E40AF"
+  cash_outflow: "#60A5FA"
+  cash_balance: "#93C5FD"
+  asset: "#1E40AF"
+  liability: "#3B82F6"
+  equity: "#60A5FA"
+  other: "#BFDBFE"
 semantic:
   background: "#FFFFFF"
-  plot_background: "#FFFFFF"
-  text: "#111827"
-  border: "#000000"
-  link_opacity: 0.4
-  hover_opacity: 0.8
+  plot_background: "#F8FAFC"
+  text: "#1E3A8A"
+  border: "#1E3A8A"
+  link_opacity: 0.55
+  hover_opacity: 0.85
   node_border_width: 1.5
-  link_border_width: 0.5
-  node_thickness: 24
-  font_family: "Inter, Pretendard, Arial"
-  font_size: 12
-  title_font_size: 18
+  link_border_width: 0
+  node_thickness: 28
+  font_family: "Inter, Pretendard, Arial, sans-serif"
+  font_size: 13
+  title_font_size: 20

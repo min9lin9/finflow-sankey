@@ -1,6 +1,7 @@
 """Tests for layout improvements."""
 
 import polars as pl
+import pytest
 
 from finflow_sankey import FinancialSankey
 
@@ -28,9 +29,9 @@ def test_node_x_positions_based_on_level():
 
     label_to_x = {label: x for label, x in zip(labels, x_positions)}
 
-    # Revenue is level 0, expenses level 1, net income level 2
+    # Income statement now has 4 logical levels (0..3)
     assert label_to_x["Revenue"] == 0.0
-    assert label_to_x["Operating Expenses"] == 0.5
+    assert label_to_x["Operating Expenses"] == pytest.approx(2 / 3)
     assert label_to_x["Net Income"] == 1.0
 
 

@@ -26,9 +26,6 @@ class IncomeStatementTemplate(StatementTemplate):
         period = df["period"][0] if len(df) > 0 else None
         currency = df["currency"][0] if len(df) > 0 else None
 
-        nodes: list[SankeyNode] = []
-        links: list[SankeyLink] = []
-
         # Aggregate by section
         section_info = {}
         for section in df["section"].unique().to_list():
@@ -38,110 +35,155 @@ class IncomeStatementTemplate(StatementTemplate):
                 "accounts": section_df["account"].to_list(),
             }
 
-        def _section_accounts(section: str) -> list[str]:
+        def _amount(section: str) -> float:
+            return section_info.get(section, {}).get("amount", 0.0)
+
+        def _accounts(section: str) -> list[str]:
             return section_info.get(section, {}).get("accounts", [])
 
-        # Ensure revenue exists
-        revenue_amount = section_info.get("revenue", {}).get("amount", 0.0)
+        # Normalize section aliases to canonical names
+        revenue_amount = _amount("revenue")
+        cost_of_revenue_amount = _amount("cost_of_revenue") or _amount("cost")
+        operating_expenses_amount = _amount("operating_expenses") or _amount("expense")
+        tax_amount = _amount("tax")
+        non_operating_amount = _amount("non_operating_items")
+        profit_amount = _amount("profit")
 
-        # Create revenue node
-        revenue_accounts = _section_accounts("revenue")
-        nodes.append(
-            SankeyNode(
-                node_id="revenue",
-                label="Revenue",
-                role="revenue",
-                level=0,
-                amount=revenue_amount,
-                display_amount=revenue_amount,
-                metadata={"section": "revenue", "original_accounts": revenue_accounts},
+        # Intermediate aggregates
+        gross_profit_amount = revenue_amount - cost_of_revenue_amount
+        operating_income_amount = gross_profit_amount - operating_expenses_amount
+        net_income_computed = operating_income_amount - tax_amount - non_operating_amount
+        if profit_amount == 0.0:
+            profit_amount = net_income_computed
+
+        nodes: list[SankeyNode] = []
+        links: list[SankeyLink] = []
+
+        def add_node(
+            node_id: str,
+            label: str,
+            role: str,
+            level: int,
+            amount: float,
+            accounts: list[str],
+            y: float | None = None,
+        ) -> SankeyNode:
+            node = SankeyNode(
+                node_id=node_id,
+                label=label,
+                role=role,
+                level=level,
+                amount=amount,
+                display_amount=amount,
+                x=None,
+                y=y,
+                metadata={"section": node_id, "original_accounts": accounts},
             )
-        )
+            nodes.append(node)
+            return node
 
-        # Create expense nodes and links from revenue
-        expense_sections = {
-            "cost_of_revenue": "Cost of Revenue",
-            "cost": "Cost of Revenue",
-            "operating_expenses": "Operating Expenses",
-            "expense": "Operating Expenses",
-            "tax": "Tax",
-            "non_operating_items": "Non-operating Items",
-        }
-
-        for section, label in expense_sections.items():
-            if section not in section_info:
-                continue
-
-            amount = section_info[section]["amount"]
-            node_id = section.replace(" ", "_").lower()
-            accounts = _section_accounts(section)
-
-            nodes.append(
-                SankeyNode(
-                    node_id=node_id,
-                    label=label,
-                    role=section if section != "cost" else "cost_of_revenue",
-                    level=1,
-                    amount=amount,
-                    display_amount=amount,
-                    metadata={"section": section, "original_accounts": accounts},
-                )
-            )
-
+        def add_link(source: str, target: str, amount: float, flow_type: str = "flow", accounts: list[str] | None = None) -> None:
             links.append(
                 SankeyLink(
-                    source="revenue",
-                    target=node_id,
+                    source=source,
+                    target=target,
                     source_idx=0,
-                    target_idx=len(nodes) - 1,
+                    target_idx=0,
                     amount=amount,
                     display_amount=amount,
-                    flow_type="outflow",
-                    metadata={"section": section, "original_accounts": accounts},
+                    flow_type=flow_type,
+                    metadata={"original_accounts": accounts or []},
                 )
             )
 
-        # Create net income / profit node
-        profit_amount = section_info.get("profit", {}).get("amount", revenue_amount)
-        if "profit" not in section_info:
-            # Compute as residual
-            expenses = sum(
-                v["amount"] for k, v in section_info.items() if k != "revenue" and k != "profit"
-            )
-            profit_amount = revenue_amount - expenses
+        # Level 0: Revenue
+        add_node("revenue", "Revenue", "revenue", 0, revenue_amount, _accounts("revenue"), y=0.5)
 
-        profit_accounts = _section_accounts("profit")
-        nodes.append(
-            SankeyNode(
-                node_id="net_income",
-                label="Net Income",
-                role="net_income",
-                level=2,
-                amount=profit_amount,
-                display_amount=profit_amount,
-                metadata={"section": "profit", "original_accounts": profit_accounts},
+        # Level 1: Cost of Revenue + Gross Profit
+        if cost_of_revenue_amount > 0:
+            add_node(
+                "cost_of_revenue",
+                "Cost of Revenue",
+                "cost_of_revenue",
+                1,
+                cost_of_revenue_amount,
+                _accounts("cost_of_revenue") or _accounts("cost"),
+                y=0.78,
             )
+            add_link("revenue", "cost_of_revenue", cost_of_revenue_amount, "outflow")
+
+        add_node(
+            "gross_profit",
+            "Gross Profit",
+            "gross_profit",
+            1,
+            gross_profit_amount,
+            [],
+            y=0.35,
         )
-        profit_idx = len(nodes) - 1
+        add_link("revenue", "gross_profit", gross_profit_amount, "residual")
 
-        # Link revenue to profit
-        links.append(
-            SankeyLink(
-                source="revenue",
-                target="net_income",
-                source_idx=0,
-                target_idx=profit_idx,
-                amount=profit_amount,
-                display_amount=profit_amount,
-                flow_type="residual",
-                metadata={
-                    "section": "profit",
-                    "original_accounts": revenue_accounts + profit_accounts,
-                },
+        # Level 2: Operating Expenses + Operating Income
+        if operating_expenses_amount > 0:
+            add_node(
+                "operating_expenses",
+                "Operating Expenses",
+                "operating_expenses",
+                2,
+                operating_expenses_amount,
+                _accounts("operating_expenses") or _accounts("expense"),
+                y=0.78,
             )
-        )
+            add_link("gross_profit", "operating_expenses", operating_expenses_amount, "outflow")
 
-        # Update source/target indices
+        add_node(
+            "operating_income",
+            "Operating Income",
+            "operating_income",
+            2,
+            operating_income_amount,
+            [],
+            y=0.35,
+        )
+        add_link("gross_profit", "operating_income", operating_income_amount, "residual")
+
+        # Level 3: Non-operating + Tax + Net Income
+        if non_operating_amount > 0:
+            add_node(
+                "non_operating_items",
+                "Non-operating Items",
+                "non_operating_items",
+                3,
+                non_operating_amount,
+                _accounts("non_operating_items"),
+                y=0.78,
+            )
+            add_link("operating_income", "non_operating_items", non_operating_amount, "outflow")
+
+        if tax_amount > 0:
+            add_node(
+                "tax",
+                "Tax",
+                "tax",
+                3,
+                tax_amount,
+                _accounts("tax"),
+                y=0.65,
+            )
+            add_link("operating_income", "tax", tax_amount, "outflow")
+
+        add_node(
+            "net_income",
+            "Net Income",
+            "net_income",
+            3,
+            profit_amount,
+            _accounts("profit"),
+            y=0.35,
+        )
+        add_link("operating_income", "net_income", profit_amount, "residual")
+
+        # Update indices
         node_index = {node.node_id: i for i, node in enumerate(nodes)}
         for link in links:
             link.source_idx = node_index[link.source]

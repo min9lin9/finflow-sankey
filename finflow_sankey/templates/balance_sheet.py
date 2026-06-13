@@ -71,6 +71,7 @@ class BalanceSheetReconciliationTemplate(StatementTemplate):
                 role="asset",
                 level=0,
                 x=0.0,
+                y=0.5,
                 amount=asset_total,
                 display_amount=asset_total,
                 metadata={"section": "asset", "original_accounts": _section_accounts("asset")},
@@ -85,6 +86,7 @@ class BalanceSheetReconciliationTemplate(StatementTemplate):
                     role="asset",
                     level=1,
                     x=0.25,
+                    y=0.32,
                     amount=_section_amount("current_asset"),
                     display_amount=_section_amount("current_asset"),
                     metadata={
@@ -114,6 +116,7 @@ class BalanceSheetReconciliationTemplate(StatementTemplate):
                     role="asset",
                     level=1,
                     x=0.25,
+                    y=0.68,
                     amount=_section_amount("non_current_asset"),
                     display_amount=_section_amount("non_current_asset"),
                     metadata={
@@ -143,6 +146,7 @@ class BalanceSheetReconciliationTemplate(StatementTemplate):
                 role="liability",
                 level=0,
                 x=1.0,
+                y=0.5,
                 amount=le_total,
                 display_amount=le_total,
                 metadata={
@@ -158,17 +162,17 @@ class BalanceSheetReconciliationTemplate(StatementTemplate):
         )
 
         right_sections = [
-            ("liability", "Liabilities", "liability"),
-            ("current_liability", "Current Liabilities", "liability"),
-            ("non_current_liability", "Non-current Liabilities", "liability"),
-            ("equity", "Equity", "equity"),
+            ("liability", "Liabilities", "liability", 0.35),
+            ("current_liability", "Current Liabilities", "liability", 0.28),
+            ("non_current_liability", "Non-current Liabilities", "liability", 0.42),
+            ("equity", "Equity", "equity", 0.65),
         ]
 
         # If aggregate liability is present without sub-sections, skip sub-sections
         has_aggregate_liability = "liability" in section_info
         has_detail_liability = "current_liability" in section_info or "non_current_liability" in section_info
 
-        for section, label, role in right_sections:
+        for section, label, role, y in right_sections:
             if section not in section_info:
                 continue
             # Skip detail liability sections when only aggregate liability is provided
@@ -182,6 +186,7 @@ class BalanceSheetReconciliationTemplate(StatementTemplate):
                     role=role,
                     level=1,
                     x=0.75,
+                    y=y,
                     amount=_section_amount(section),
                     display_amount=_section_amount(section),
                     metadata={"section": section, "original_accounts": _section_accounts(section)},

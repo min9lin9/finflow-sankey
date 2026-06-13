@@ -21,6 +21,8 @@ ALL_ROLES = {
     "tax",
     "profit",
     "net_income",
+    "gross_profit",
+    "operating_income",
     "cash_inflow",
     "cash_outflow",
     "cash_balance",
@@ -60,6 +62,8 @@ class RolePalette:
     tax: str = "#7C3AED"
     profit: str = "#059669"
     net_income: str = "#059669"
+    gross_profit: str = "#0EA5E9"
+    operating_income: str = "#8B5CF6"
     cash_inflow: str = "#0891B2"
     cash_outflow: str = "#E11D48"
     cash_balance: str = "#D97706"

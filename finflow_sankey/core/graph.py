@@ -17,6 +17,7 @@ class SankeyNode:
     display_amount: float
     metadata: dict = field(default_factory=dict)
     x: float | None = None
+    y: float | None = None
 
 
 @dataclass

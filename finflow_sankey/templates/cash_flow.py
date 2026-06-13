@@ -42,17 +42,17 @@ class CashFlowStatementTemplate(StatementTemplate):
         def _section_accounts(section: str) -> list[str]:
             return section_info.get(section, {}).get("accounts", [])
 
-        # Section definitions with labels
+        # Section definitions with labels and vertical positions
         sections = [
-            ("beginning_cash", "Beginning Cash"),
-            ("operating_cash_flow", "Operating Cash Flow"),
-            ("investing_cash_flow", "Investing Cash Flow"),
-            ("financing_cash_flow", "Financing Cash Flow"),
-            ("fx_effect", "FX Effect"),
-            ("ending_cash", "Ending Cash"),
+            ("beginning_cash", "Beginning Cash", 0.5),
+            ("operating_cash_flow", "Operating Cash Flow", 0.18),
+            ("investing_cash_flow", "Investing Cash Flow", 0.39),
+            ("financing_cash_flow", "Financing Cash Flow", 0.61),
+            ("fx_effect", "FX Effect", 0.82),
+            ("ending_cash", "Ending Cash", 0.5),
         ]
 
-        for section, label in sections:
+        for section, label, y in sections:
             amount = section_info.get(section, {}).get("amount", 0.0)
             node_id = section
             accounts = _section_accounts(section)
@@ -79,6 +79,8 @@ class CashFlowStatementTemplate(StatementTemplate):
                     level=level,
                     amount=amount,
                     display_amount=amount,
+                    x=None,
+                    y=y,
                     metadata={"section": section, "original_accounts": accounts},
                 )
             )

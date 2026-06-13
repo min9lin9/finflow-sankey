@@ -3,12 +3,14 @@ version: "1.0.0"
 description: "Default financial statement Sankey color palette"
 roles:
   revenue: "#2563EB"
-  cost_of_revenue: "#F59E0B"
-  operating_expenses: "#DC2626"
+  cost_of_revenue: "#F97316"
+  operating_expenses: "#EF4444"
   non_operating_items: "#64748B"
-  tax: "#7C3AED"
-  profit: "#059669"
-  net_income: "#059669"
+  tax: "#8B5CF6"
+  profit: "#10B981"
+  net_income: "#10B981"
+  gross_profit: "#06B6D4"
+  operating_income: "#14B8A6"
   cash_inflow: "#0891B2"
   cash_outflow: "#E11D48"
   cash_balance: "#D97706"
@@ -19,13 +21,13 @@ roles:
 semantic:
   background: "#FFFFFF"
   plot_background: "#F8FAFC"
-  text: "#334155"
+  text: "#1E293B"
   border: "#334155"
-  link_opacity: 0.45
-  hover_opacity: 0.85
+  link_opacity: 0.6
+  hover_opacity: 0.9
   node_border_width: 1.5
-  link_border_width: 0.5
-  node_thickness: 24
-  font_family: "Inter, Pretendard, Arial"
-  font_size: 12
-  title_font_size: 18
+  link_border_width: 0
+  node_thickness: 28
+  font_family: "Inter, Pretendard, Arial, sans-serif"
+  font_size: 13
+  title_font_size: 20

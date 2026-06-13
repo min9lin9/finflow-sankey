@@ -4,11 +4,13 @@ description: "Colorblind-friendly palette using blue/orange/teal"
 roles:
   revenue: "#0173B2"
   cost_of_revenue: "#DE8F05"
-  operating_expenses: "#029E73"
+  operating_expenses: "#D55E00"
   non_operating_items: "#949494"
-  tax: "#D55E00"
-  profit: "#CC6677"
-  net_income: "#CC6677"
+  tax: "#CC79A7"
+  profit: "#029E73"
+  net_income: "#029E73"
+  gross_profit: "#56B4E9"
+  operating_income: "#009E73"
   cash_inflow: "#0173B2"
   cash_outflow: "#D55E00"
   cash_balance: "#332288"
@@ -21,11 +23,11 @@ semantic:
   plot_background: "#FAFAFA"
   text: "#1F2937"
   border: "#1F2937"
-  link_opacity: 0.45
-  hover_opacity: 0.85
+  link_opacity: 0.6
+  hover_opacity: 0.9
   node_border_width: 1.5
-  link_border_width: 0.5
-  node_thickness: 24
-  font_family: "Inter, Pretendard, Arial"
-  font_size: 12
-  title_font_size: 18
+  link_border_width: 0
+  node_thickness: 28
+  font_family: "Inter, Pretendard, Arial, sans-serif"
+  font_size: 13
+  title_font_size: 20

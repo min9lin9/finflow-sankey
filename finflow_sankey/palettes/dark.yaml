@@ -3,12 +3,14 @@ version: "1.0.0"
 description: "Dark background theme for dashboards and presentations"
 roles:
   revenue: "#60A5FA"
-  cost_of_revenue: "#FBBF24"
+  cost_of_revenue: "#FB923C"
   operating_expenses: "#F87171"
   non_operating_items: "#94A3B8"
   tax: "#A78BFA"
   profit: "#34D399"
   net_income: "#34D399"
+  gross_profit: "#22D3EE"
+  operating_income: "#2DD4BF"
   cash_inflow: "#22D3EE"
   cash_outflow: "#FB7185"
   cash_balance: "#F59E0B"
@@ -21,11 +23,11 @@ semantic:
   plot_background: "#1E293B"
   text: "#E2E8F0"
   border: "#CBD5E1"
-  link_opacity: 0.4
-  hover_opacity: 0.8
+  link_opacity: 0.55
+  hover_opacity: 0.9
   node_border_width: 1.5
-  link_border_width: 0.5
-  node_thickness: 24
-  font_family: "Inter, Pretendard, Arial"
-  font_size: 12
-  title_font_size: 18
+  link_border_width: 0
+  node_thickness: 28
+  font_family: "Inter, Pretendard, Arial, sans-serif"
+  font_size: 13
+  title_font_size: 20

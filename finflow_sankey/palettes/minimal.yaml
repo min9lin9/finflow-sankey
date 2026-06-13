@@ -1,31 +1,33 @@
 name: "minimal"
 version: "1.0.0"
-description: "Minimal white-background theme with strong borders"
+description: "Minimal grayscale palette with subtle accent colors"
 roles:
-  revenue: "#2563EB"
-  cost_of_revenue: "#F59E0B"
-  operating_expenses: "#DC2626"
-  non_operating_items: "#94A3B8"
-  tax: "#7C3AED"
-  profit: "#059669"
-  net_income: "#059669"
-  cash_inflow: "#0891B2"
-  cash_outflow: "#E11D48"
-  cash_balance: "#D97706"
-  asset: "#1E3A8A"
-  liability: "#9F1239"
-  equity: "#15803D"
+  revenue: "#334155"
+  cost_of_revenue: "#94A3B8"
+  operating_expenses: "#64748B"
+  non_operating_items: "#CBD5E1"
+  tax: "#475569"
+  profit: "#0F172A"
+  net_income: "#0F172A"
+  gross_profit: "#64748B"
+  operating_income: "#475569"
+  cash_inflow: "#334155"
+  cash_outflow: "#94A3B8"
+  cash_balance: "#64748B"
+  asset: "#334155"
+  liability: "#64748B"
+  equity: "#475569"
   other: "#CBD5E1"
 semantic:
   background: "#FFFFFF"
   plot_background: "#FFFFFF"
   text: "#0F172A"
-  border: "#0F172A"
-  link_opacity: 0.35
-  hover_opacity: 0.8
-  node_border_width: 2.0
-  link_border_width: 0.8
+  border: "#334155"
+  link_opacity: 0.5
+  hover_opacity: 0.85
+  node_border_width: 1
+  link_border_width: 0
   node_thickness: 24
-  font_family: "Inter, Pretendard, Arial"
-  font_size: 12
-  title_font_size: 18
+  font_family: "Inter, Pretendard, Arial, sans-serif"
+  font_size: 13
+  title_font_size: 20

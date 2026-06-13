@@ -48,7 +48,7 @@ class SignNormalizer:
             lf = lf.with_columns(
                 pl.when(
                     pl.col("section").is_in(
-                        ["expense", "cost", "cogs", "opex", "tax", "cash_outflow"]
+                        ["expense", "cost", "cost_of_revenue", "cogs", "opex", "operating_expenses", "tax", "cash_outflow"]
                     )
                 )
                 .then(-signed_value)

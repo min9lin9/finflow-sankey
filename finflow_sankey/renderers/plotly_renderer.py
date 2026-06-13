@@ -24,11 +24,12 @@ class PlotlyRenderer(Renderer):
         node_colors = [palette.get_role_color(node.role) for node in graph.nodes]
         node_hover = self._build_node_hover(graph)
         node_x = self._build_node_x(graph)
+        node_y = self._build_node_y(graph)
 
         link_sources = [link.source_idx for link in graph.links]
         link_targets = [link.target_idx for link in graph.links]
         link_values = [link.amount for link in graph.links]
-        link_roles = [self._link_role(graph, link) for link in graph.links]
+        link_roles = [self._link_role(graph, link, use_target=True) for link in graph.links]
         link_colors = [
             hex_to_rgba(palette.get_role_color(role), palette.semantic.link_opacity)
             for role in link_roles
@@ -38,7 +39,7 @@ class PlotlyRenderer(Renderer):
         sankey = go.Sankey(
             arrangement="snap",
             node=dict(
-                pad=20,
+                pad=24,
                 thickness=palette.semantic.node_thickness,
                 line=dict(
                     color=palette.semantic.border,
@@ -47,6 +48,7 @@ class PlotlyRenderer(Renderer):
                 label=labels,
                 color=node_colors,
                 x=node_x,
+                y=node_y,
                 customdata=node_hover,
                 hovertemplate="%{customdata}<extra></extra>",
             ),
@@ -57,7 +59,7 @@ class PlotlyRenderer(Renderer):
                 color=link_colors,
                 line=dict(
                     color=palette.semantic.border,
-                    width=palette.semantic.link_border_width,
+                    width=0,
                 ),
                 customdata=link_hover,
                 hovertemplate="%{customdata}<extra></extra>",
@@ -86,9 +88,19 @@ class PlotlyRenderer(Renderer):
             return [0.0] * len(graph.nodes)
         return [node.level / max_level for node in graph.nodes]
 
-    def _link_role(self, graph: FinancialGraph, link) -> str:
+    def _build_node_y(self, graph: FinancialGraph) -> list[float]:
+        """Use explicit node.y when available, otherwise let Plotly auto-place."""
+        if not graph.nodes:
+            return []
+        has_explicit_y = any(node.y is not None for node in graph.nodes)
+        if not has_explicit_y:
+            return []
+        return [node.y if node.y is not None else 0.5 for node in graph.nodes]
+
+    def _link_role(self, graph: FinancialGraph, link, use_target: bool = False) -> str:
+        node_id = link.target if use_target else link.source
         for node in graph.nodes:
-            if node.node_id == link.source:
+            if node.node_id == node_id:
                 return node.role
         return "other"
 
@@ -147,8 +159,6 @@ class PlotlyRenderer(Renderer):
         title_text = title or f"{graph.statement_type or 'Financial'} Flow"
         if is_reconciliation:
             title_text = f"[Reconciliation View] {title_text}"
-        if graph.period:
-            title_text += f" ({graph.period})"
 
         fig.update_layout(
             title=dict(
@@ -159,6 +169,7 @@ class PlotlyRenderer(Renderer):
                     family=palette.semantic.font_family,
                 ),
                 x=0.5,
+                xanchor="center",
             ),
             font=dict(
                 size=palette.semantic.font_size,
@@ -167,10 +178,10 @@ class PlotlyRenderer(Renderer):
             ),
             paper_bgcolor=palette.semantic.background,
             plot_bgcolor=palette.semantic.plot_background,
-            margin=dict(l=40, r=120, t=80, b=40),
+            margin=dict(l=60, r=160, t=100, b=60),
             showlegend=False,
-            height=600,
-            width=1100,
+            height=700,
+            width=1300,
         )
 
     def _add_legend(self, fig: go.Figure, palette: ColorPalette, graph: FinancialGraph) -> None:
@@ -185,14 +196,15 @@ class PlotlyRenderer(Renderer):
             label = role.replace("_", " ").title()
             annotations.append(
                 dict(
-                    x=1.02,
-                    y=0.95 - i * 0.08,
+                    x=1.01,
+                    y=0.96 - i * 0.06,
                     xref="paper",
                     yref="paper",
-                    text=f"<span style='color:{color};'>■</span> {label}",
+                    text=f"<span style='color:{color};'>●</span> {label}",
                     showarrow=False,
                     font=dict(
-                        size=12,
+                        size=13,
+                        color=palette.semantic.text,
                         family=palette.semantic.font_family,
                     ),
                     align="left",
