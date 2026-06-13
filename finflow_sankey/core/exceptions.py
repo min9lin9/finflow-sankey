@@ -1,5 +1,7 @@
 """FinFlow Sankey custom exceptions."""
 
+from __future__ import annotations
+
 
 class FinFlowError(Exception):
     """Base exception for FinFlow Sankey."""
