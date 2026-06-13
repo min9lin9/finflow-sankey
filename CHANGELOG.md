@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.12] - 2026-06-13
+
+### Added
+- Value labels on every Sankey node (compact T/B/M/K formatting).
+- Non-operating income support in income statement template.
+
+### Changed
+- Income statement template now skips unnecessary intermediate nodes when COGS or OpEx data is missing.
+- Validator handles non-operating income in profit reconciliation.
+- Improved Dartlab integration example derives operating expenses and tax benefit.
+
 ## [0.1.11] - 2026-06-13
 
 ### Changed
