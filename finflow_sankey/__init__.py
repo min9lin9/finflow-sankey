@@ -13,7 +13,7 @@ from finflow_sankey.core.pipeline import SankeyPipeline
 from finflow_sankey.templates.income_statement import IncomeStatementTemplate
 
 
-SankeyData = pl.DataFrame | pl.LazyFrame | Any
+SankeyData = pl.DataFrame | pl.LazyFrame
 SankeyMapping = AccountMapper | dict[str, Any] | str | Path | None
 SankeyPalette = ColorPalette | dict[str, Any] | str | Path | None
 

@@ -8,7 +8,6 @@ from typing import Any
 import polars as pl
 from plotly.graph_objects import Figure
 
-from finflow_sankey.adapters.pandas_adapter import to_polars
 from finflow_sankey.core.graph import FinancialGraph
 from finflow_sankey.core.mapper import AccountMapper
 from finflow_sankey.core.normalizer import SignNormalizer, UnitNormalizer
@@ -43,24 +42,15 @@ class SankeyPipeline:
         self._sign_normalizer = SignNormalizer(expense_sign="positive")
         self._unit_normalizer = UnitNormalizer()
 
-    def _to_lazy_frame(self, data):
+    def _to_lazy_frame(self, data: pl.DataFrame | pl.LazyFrame) -> pl.LazyFrame:
         """Convert input data to Polars LazyFrame."""
         if isinstance(data, pl.LazyFrame):
             return data
         if isinstance(data, pl.DataFrame):
             return data.lazy()
 
-        # Attempt pandas conversion
-        try:
-            import pandas as pd
-            if isinstance(data, pd.DataFrame):
-                return to_polars(data).lazy()
-        except ImportError:
-            pass
-
         raise TypeError(
-            "Input data must be a Polars DataFrame, Polars LazyFrame, "
-            "or pandas DataFrame (with pandas extra installed)."
+            "Input data must be a Polars DataFrame or Polars LazyFrame."
         )
 
     def _resolve_mapper(

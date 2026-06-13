@@ -5,7 +5,6 @@ Polars-first financial statement Sankey visualization library.
 ## Features
 
 - **Polars-first**: Native support for `pl.DataFrame` and `pl.LazyFrame`
-- **pandas optional**: Use pandas DataFrames with `pip install finflow-sankey[pandas]`
 - **Accounting-aware validation**: Period/currency checks, reconciliation validation
 - **Role-based color palette**: Revenue, costs, profit, cash flow each have distinct colors
 - **Customizable themes**: default, monochrome, colorblind-safe, minimal, dark, plus custom YAML palettes
@@ -177,13 +176,7 @@ fig = FinancialSankey.income_statement(df).validate().render(
 ## Installation
 
 ```bash
-pip install -e .
-```
-
-With optional pandas support:
-
-```bash
-pip install -e ".[pandas]"
+pip install -e ".[dev]"
 ```
 
 ## Development
