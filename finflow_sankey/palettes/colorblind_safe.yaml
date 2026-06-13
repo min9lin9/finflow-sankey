@@ -1,0 +1,31 @@
+name: "colorblind_safe"
+version: "1.0.0"
+description: "Colorblind-friendly palette using blue/orange/teal"
+roles:
+  revenue: "#0173B2"
+  cost_of_revenue: "#DE8F05"
+  operating_expenses: "#029E73"
+  non_operating_items: "#949494"
+  tax: "#D55E00"
+  profit: "#CC6677"
+  net_income: "#CC6677"
+  cash_inflow: "#0173B2"
+  cash_outflow: "#D55E00"
+  cash_balance: "#332288"
+  asset: "#332288"
+  liability: "#D55E00"
+  equity: "#029E73"
+  other: "#949494"
+semantic:
+  background: "#FFFFFF"
+  plot_background: "#FAFAFA"
+  text: "#1F2937"
+  border: "#1F2937"
+  link_opacity: 0.45
+  hover_opacity: 0.85
+  node_border_width: 1.5
+  link_border_width: 0.5
+  node_thickness: 24
+  font_family: "Inter, Pretendard, Arial"
+  font_size: 12
+  title_font_size: 18

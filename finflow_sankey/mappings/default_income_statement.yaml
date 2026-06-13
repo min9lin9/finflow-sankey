@@ -1,0 +1,27 @@
+revenue:
+  - Revenue
+  - Net Sales
+  - Sales Revenue
+  - Total Revenue
+
+cost_of_revenue:
+  - Cost of Revenue
+  - Cost of Goods Sold
+  - COGS
+
+operating_expenses:
+  - SG&A
+  - Selling, General and Administrative
+  - Research and Development
+  - R&D
+  - Operating Expenses
+
+tax:
+  - Income Tax Expense
+  - Tax Expense
+  - Income Taxes
+
+profit:
+  - Net Income
+  - Net Profit
+  - Profit for the Period

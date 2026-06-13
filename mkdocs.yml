@@ -1,0 +1,38 @@
+site_name: FinFlow Sankey
+site_description: Polars-first financial statement Sankey visualization library
+site_url: https://finflow.github.io/finflow-sankey
+repo_url: https://github.com/finflow/finflow-sankey
+repo_name: finflow-sankey
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - API Reference: api.md
+  - Themes & Palettes: themes.md
+  - Validation: validation.md
+  - Changelog: changelog.md
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - admonition
+
+plugins:
+  - search

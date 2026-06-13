@@ -1,0 +1,31 @@
+name: "monochrome"
+version: "1.0.0"
+description: "Grayscale palette optimized for print"
+roles:
+  revenue: "#374151"
+  cost_of_revenue: "#6B7280"
+  operating_expenses: "#4B5563"
+  non_operating_items: "#9CA3AF"
+  tax: "#4B5563"
+  profit: "#111827"
+  net_income: "#111827"
+  cash_inflow: "#374151"
+  cash_outflow: "#4B5563"
+  cash_balance: "#111827"
+  asset: "#111827"
+  liability: "#374151"
+  equity: "#4B5563"
+  other: "#9CA3AF"
+semantic:
+  background: "#FFFFFF"
+  plot_background: "#FFFFFF"
+  text: "#111827"
+  border: "#000000"
+  link_opacity: 0.4
+  hover_opacity: 0.8
+  node_border_width: 1.5
+  link_border_width: 0.5
+  node_thickness: 24
+  font_family: "Inter, Pretendard, Arial"
+  font_size: 12
+  title_font_size: 18

@@ -1,0 +1,31 @@
+name: "minimal"
+version: "1.0.0"
+description: "Minimal white-background theme with strong borders"
+roles:
+  revenue: "#2563EB"
+  cost_of_revenue: "#F59E0B"
+  operating_expenses: "#DC2626"
+  non_operating_items: "#94A3B8"
+  tax: "#7C3AED"
+  profit: "#059669"
+  net_income: "#059669"
+  cash_inflow: "#0891B2"
+  cash_outflow: "#E11D48"
+  cash_balance: "#D97706"
+  asset: "#1E3A8A"
+  liability: "#9F1239"
+  equity: "#15803D"
+  other: "#CBD5E1"
+semantic:
+  background: "#FFFFFF"
+  plot_background: "#FFFFFF"
+  text: "#0F172A"
+  border: "#0F172A"
+  link_opacity: 0.35
+  hover_opacity: 0.8
+  node_border_width: 2.0
+  link_border_width: 0.8
+  node_thickness: 24
+  font_family: "Inter, Pretendard, Arial"
+  font_size: 12
+  title_font_size: 18

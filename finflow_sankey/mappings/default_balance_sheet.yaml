@@ -1,0 +1,24 @@
+current_asset:
+  - Current Assets
+  - Total Current Assets
+
+non_current_asset:
+  - Non-current Assets
+  - Total Non-current Assets
+  - Property, Plant and Equipment
+  - Intangible Assets
+
+current_liability:
+  - Current Liabilities
+  - Total Current Liabilities
+
+non_current_liability:
+  - Non-current Liabilities
+  - Total Non-current Liabilities
+  - Long-term Debt
+
+equity:
+  - Equity
+  - Total Equity
+  - Shareholders' Equity
+  - Stockholders' Equity

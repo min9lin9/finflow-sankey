@@ -1,0 +1,27 @@
+beginning_cash:
+  - Beginning Cash
+  - Cash at Beginning of Period
+
+operating_cash_flow:
+  - Operating Cash Flow
+  - Cash Flow from Operations
+  - Net Cash Provided by Operating Activities
+
+investing_cash_flow:
+  - Investing Cash Flow
+  - Cash Flow from Investing
+  - Net Cash Used in Investing Activities
+
+financing_cash_flow:
+  - Financing Cash Flow
+  - Cash Flow from Financing
+  - Net Cash Used in Financing Activities
+
+fx_effect:
+  - FX Effect
+  - Foreign Exchange Effect
+  - Effect of Exchange Rate Changes
+
+ending_cash:
+  - Ending Cash
+  - Cash at End of Period
