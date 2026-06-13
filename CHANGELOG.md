@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.11] - 2026-06-13
+
+### Changed
+- Redesigned income statement Sankey with intermediate nodes (Gross Profit, Operating Income).
+- Links are now colored by target role for clearer expense/profit flow.
+- Added explicit vertical node positioning across all templates.
+- Improved default palette colors, link opacity, and typography.
+- Fixed sign normalization for `cost_of_revenue` and `operating_expenses` sections.
+
 ## [0.1.10] - 2026-06-12
 
 ### Added
