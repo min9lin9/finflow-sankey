@@ -41,8 +41,8 @@ def test_balance_sheet_reconciliation():
 
     sankey = fig.data[0]
     labels = sankey.node.label
-    assert "Total Assets" in labels
-    assert "Total Liabilities and Equity" in labels
+    assert any("Total Assets" in label for label in labels)
+    assert any("Total Liabilities and Equity" in label for label in labels)
 
 
 def test_balance_sheet_reconciliation_error():

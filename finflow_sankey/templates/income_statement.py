@@ -52,9 +52,66 @@ class IncomeStatementTemplate(StatementTemplate):
         # Intermediate aggregates
         gross_profit_amount = revenue_amount - cost_of_revenue_amount
         operating_income_amount = gross_profit_amount - operating_expenses_amount
-        net_income_computed = operating_income_amount - tax_amount - non_operating_amount
+        net_income_computed = operating_income_amount - tax_amount
+        raw_non_operating = (
+            df.filter(df["section"] == "non_operating_items")["value"].sum()
+            if "non_operating_items" in section_info
+            else 0.0
+        )
+        non_operating_is_income = raw_non_operating > 0
+        if non_operating_is_income:
+            net_income_computed += non_operating_amount
+        else:
+            net_income_computed -= non_operating_amount
+
         if profit_amount == 0.0:
             profit_amount = net_income_computed
+
+        has_cogs = cost_of_revenue_amount > 0
+        has_opex = operating_expenses_amount > 0
+        has_tax = tax_amount > 0
+        has_non_op = non_operating_amount > 0
+
+        # Determine level assignments based on available sections.
+        # We want a left-to-right narrative with no empty intermediate levels.
+        if has_cogs and has_opex:
+            levels = {
+                "revenue": 0,
+                "cost_of_revenue": 1,
+                "gross_profit": 1,
+                "operating_expenses": 2,
+                "operating_income": 2,
+                "tax": 3,
+                "non_operating_items": 3,
+                "net_income": 3,
+            }
+        elif has_cogs:
+            levels = {
+                "revenue": 0,
+                "cost_of_revenue": 1,
+                "gross_profit": 1,
+                "operating_income": 2,
+                "tax": 3,
+                "non_operating_items": 3,
+                "net_income": 3,
+            }
+        elif has_opex:
+            levels = {
+                "revenue": 0,
+                "operating_expenses": 1,
+                "operating_income": 1,
+                "tax": 2,
+                "non_operating_items": 2,
+                "net_income": 2,
+            }
+        else:
+            levels = {
+                "revenue": 0,
+                "operating_income": 1,
+                "tax": 2,
+                "non_operating_items": 2,
+                "net_income": 2,
+            }
 
         nodes: list[SankeyNode] = []
         links: list[SankeyLink] = []
@@ -82,7 +139,13 @@ class IncomeStatementTemplate(StatementTemplate):
             nodes.append(node)
             return node
 
-        def add_link(source: str, target: str, amount: float, flow_type: str = "flow", accounts: list[str] | None = None) -> None:
+        def add_link(
+            source: str,
+            target: str,
+            amount: float,
+            flow_type: str = "flow",
+            accounts: list[str] | None = None,
+        ) -> None:
             links.append(
                 SankeyLink(
                     source=source,
@@ -96,92 +159,127 @@ class IncomeStatementTemplate(StatementTemplate):
                 )
             )
 
-        # Level 0: Revenue
-        add_node("revenue", "Revenue", "revenue", 0, revenue_amount, _accounts("revenue"), y=0.5)
+        # Revenue
+        add_node(
+            "revenue",
+            "Revenue",
+            "revenue",
+            levels["revenue"],
+            revenue_amount,
+            _accounts("revenue"),
+            y=0.5,
+        )
 
-        # Level 1: Cost of Revenue + Gross Profit
-        if cost_of_revenue_amount > 0:
+        # Cost of Revenue + Gross Profit
+        if has_cogs:
             add_node(
                 "cost_of_revenue",
                 "Cost of Revenue",
                 "cost_of_revenue",
-                1,
+                levels["cost_of_revenue"],
                 cost_of_revenue_amount,
                 _accounts("cost_of_revenue") or _accounts("cost"),
                 y=0.78,
             )
             add_link("revenue", "cost_of_revenue", cost_of_revenue_amount, "outflow")
 
-        add_node(
-            "gross_profit",
-            "Gross Profit",
-            "gross_profit",
-            1,
-            gross_profit_amount,
-            [],
-            y=0.35,
-        )
-        add_link("revenue", "gross_profit", gross_profit_amount, "residual")
+            add_node(
+                "gross_profit",
+                "Gross Profit",
+                "gross_profit",
+                levels["gross_profit"],
+                gross_profit_amount,
+                [],
+                y=0.35,
+            )
+            add_link("revenue", "gross_profit", gross_profit_amount, "residual")
+            previous_aggregates = ["gross_profit"]
+        else:
+            previous_aggregates = ["revenue"]
 
-        # Level 2: Operating Expenses + Operating Income
-        if operating_expenses_amount > 0:
+        # Operating Expenses + Operating Income
+        if has_opex:
             add_node(
                 "operating_expenses",
                 "Operating Expenses",
                 "operating_expenses",
-                2,
+                levels["operating_expenses"],
                 operating_expenses_amount,
                 _accounts("operating_expenses") or _accounts("expense"),
                 y=0.78,
             )
-            add_link("gross_profit", "operating_expenses", operating_expenses_amount, "outflow")
+            for source in previous_aggregates:
+                add_link(source, "operating_expenses", operating_expenses_amount, "outflow")
 
         add_node(
             "operating_income",
             "Operating Income",
             "operating_income",
-            2,
+            levels["operating_income"],
             operating_income_amount,
             [],
             y=0.35,
         )
-        add_link("gross_profit", "operating_income", operating_income_amount, "residual")
+        for source in previous_aggregates:
+            add_link(source, "operating_income", operating_income_amount, "residual")
 
-        # Level 3: Non-operating + Tax + Net Income
-        if non_operating_amount > 0:
-            add_node(
-                "non_operating_items",
-                "Non-operating Items",
-                "non_operating_items",
-                3,
-                non_operating_amount,
-                _accounts("non_operating_items"),
-                y=0.78,
-            )
-            add_link("operating_income", "non_operating_items", non_operating_amount, "outflow")
-
-        if tax_amount > 0:
+        # Tax / Non-operating + Net Income
+        if has_tax:
             add_node(
                 "tax",
                 "Tax",
                 "tax",
-                3,
+                levels["tax"],
                 tax_amount,
                 _accounts("tax"),
                 y=0.65,
             )
             add_link("operating_income", "tax", tax_amount, "outflow")
 
+        if has_non_op:
+            if non_operating_is_income:
+                add_node(
+                    "non_operating_items",
+                    "Non-operating Income",
+                    "non_operating_items",
+                    levels["non_operating_items"],
+                    non_operating_amount,
+                    _accounts("non_operating_items"),
+                    y=0.22,
+                )
+            else:
+                add_node(
+                    "non_operating_items",
+                    "Non-operating Items",
+                    "non_operating_items",
+                    levels["non_operating_items"],
+                    non_operating_amount,
+                    _accounts("non_operating_items"),
+                    y=0.78,
+                )
+                add_link(
+                    "operating_income",
+                    "non_operating_items",
+                    non_operating_amount,
+                    "outflow",
+                )
+
+        net_income_link_amount = operating_income_amount - tax_amount
+        if non_operating_is_income:
+            net_income_link_amount += non_operating_amount
+
         add_node(
             "net_income",
             "Net Income",
             "net_income",
-            3,
+            levels["net_income"],
             profit_amount,
             _accounts("profit"),
             y=0.35,
         )
-        add_link("operating_income", "net_income", profit_amount, "residual")
+        add_link("operating_income", "net_income", net_income_link_amount, "residual")
+        if non_operating_is_income:
+            add_link("non_operating_items", "net_income", non_operating_amount, "residual")
 
         # Update indices
         node_index = {node.node_id: i for i, node in enumerate(nodes)}

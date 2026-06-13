@@ -114,11 +114,18 @@ class FinancialValidator:
         revenue = df.filter(df["section"] == "revenue")["value"].sum()
         profit = df.filter(df["section"] == "profit")["value"].sum()
 
-        # Get all expense-like sections (stored as negative values)
+        # Get all expense-like sections (stored as negative values).
         expense_sections = {"cost", "expense", "cost_of_revenue", "operating_expenses", "tax"}
         expenses = df.filter(df["section"].is_in(expense_sections))["value"].sum()
 
-        expected_profit = revenue + expenses
+        # Non-operating items can be income or expense; include positive values
+        # (income) in the expected profit reconciliation.
+        non_op = df.filter(df["section"] == "non_operating_items")
+        non_operating_income = 0.0
+        if len(non_op) > 0:
+            non_operating_income = non_op.filter(non_op["value"] > 0)["value"].sum()
+
+        expected_profit = revenue + expenses + non_operating_income
         diff = abs(expected_profit - profit)
 
         if diff > tolerance:

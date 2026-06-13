@@ -27,11 +27,11 @@ def test_node_x_positions_based_on_level():
     x_positions = sankey.node.x
     labels = sankey.node.label
 
-    label_to_x = {label: x for label, x in zip(labels, x_positions)}
+    label_to_x = {label.split("<br>")[0]: x for label, x in zip(labels, x_positions)}
 
-    # Income statement now has 4 logical levels (0..3)
+    # Income statement has variable levels depending on available sections
     assert label_to_x["Revenue"] == 0.0
-    assert label_to_x["Operating Expenses"] == pytest.approx(2 / 3)
+    assert label_to_x["Operating Expenses"] == pytest.approx(0.5)
     assert label_to_x["Net Income"] == 1.0
 
 
@@ -56,7 +56,7 @@ def test_cash_flow_x_positions():
     x_positions = sankey.node.x
     labels = sankey.node.label
 
-    label_to_x = {label: x for label, x in zip(labels, x_positions)}
+    label_to_x = {label.split("<br>")[0]: x for label, x in zip(labels, x_positions)}
 
     assert label_to_x["Beginning Cash"] == 0.0
     assert label_to_x["Operating Cash Flow"] == 0.5

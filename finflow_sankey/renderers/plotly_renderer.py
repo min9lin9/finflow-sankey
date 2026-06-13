@@ -20,7 +20,7 @@ class PlotlyRenderer(Renderer):
     ) -> go.Figure:
         palette.validate()
 
-        labels = [node.label for node in graph.nodes]
+        labels = [self._node_label(node) for node in graph.nodes]
         node_colors = [palette.get_role_color(node.role) for node in graph.nodes]
         node_hover = self._build_node_hover(graph)
         node_x = self._build_node_x(graph)
@@ -146,7 +146,22 @@ class PlotlyRenderer(Renderer):
         return hover_texts
 
     def _fmt_money(self, value: float) -> str:
-        return f"${value:,.0f}"
+        """Format a numeric value with compact unit suffix."""
+        abs_value = abs(value)
+        if abs_value >= 1_000_000_000_000:
+            return f"{value / 1_000_000_000_000:,.1f}T"
+        if abs_value >= 1_000_000_000:
+            return f"{value / 1_000_000_000:,.1f}B"
+        if abs_value >= 1_000_000:
+            return f"{value / 1_000_000:,.1f}M"
+        if abs_value >= 1_000:
+            return f"{value / 1_000:,.1f}K"
+        return f"{value:,.0f}"
+
+    def _node_label(self, node: SankeyNode) -> str:
+        """Build node label with value on a second line."""
+        value_text = self._fmt_money(node.display_amount)
+        return f"{node.label}<br><span style='font-size:0.85em;opacity:0.8'>{value_text}</span>"
 
     def _apply_layout(
         self,
