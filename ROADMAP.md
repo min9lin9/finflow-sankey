@@ -52,9 +52,9 @@ FinFlow Sankey follows [Semantic Versioning](https://semver.org/lang/ko/).
 
 ### 0.2.2 — API Consistency
 
-- [ ] Review `layout` parameter across all statement types
-- [ ] Consistent `group_minor()` behavior for reference layout
-- [ ] Standardize error messages and validation hints
+- [x] Review `layout` parameter across all statement types
+- [x] Consistent `group_minor()` behavior for reference layout
+- [x] Standardize error messages and validation hints
 
 ---
 

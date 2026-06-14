@@ -26,25 +26,57 @@ class MissingColumnError(SchemaError):
 class PeriodMismatchError(FinFlowError):
     """Raised when multiple periods are detected."""
 
-    pass
+    def __init__(self, periods: list[str] | None = None, context: str | None = None):
+        self.periods = periods or []
+        self.context = context
+        msg = "Multiple periods detected"
+        if context:
+            msg += f" for {context}"
+        msg += "."
+        if self.periods:
+            msg += f" Periods found: {', '.join(self.periods)}."
+        msg += " Use a single period per Sankey, or use multi_period_compare() for two periods."
+        super().__init__(msg)
 
 
 class CurrencyMismatchError(FinFlowError):
     """Raised when multiple currencies are detected."""
 
-    pass
+    def __init__(self, currencies: list[str] | None = None, context: str | None = None):
+        self.currencies = currencies or []
+        self.context = context
+        msg = "Multiple currencies detected"
+        if context:
+            msg += f" for {context}"
+        msg += "."
+        if self.currencies:
+            msg += f" Currencies found: {', '.join(self.currencies)}."
+        msg += " Use a single currency per Sankey."
+        super().__init__(msg)
 
 
 class MissingAccountError(FinFlowError):
     """Raised when a required account role is missing."""
 
-    def __init__(self, role: str, statement: str, available: list[str] | None = None):
+    def __init__(
+        self,
+        role: str,
+        statement: str,
+        available: list[str] | None = None,
+        section_hint: str | None = None,
+    ):
         self.role = role
         self.statement = statement
         self.available = available or []
+        self.section_hint = section_hint
         msg = f"Required role '{role}' is missing for statement '{statement}'."
+        if section_hint:
+            msg += f" Expected section: '{section_hint}'."
         if self.available:
-            msg += f" Available accounts: {', '.join(self.available)}"
+            msg += f" Available sections/accounts: {', '.join(self.available[:20])}"
+            if len(self.available) > 20:
+                msg += f" ... ({len(self.available) - 20} more)"
+        msg += " See docs/mapping.md for supported section names."
         super().__init__(msg)
 
 
@@ -68,25 +100,45 @@ class ReconciliationError(FinFlowError):
         self.period = period
         self.currency = currency
         self.tolerance = tolerance
+        ctx = ""
+        if period:
+            ctx += f" (period: {period})"
+        if currency:
+            ctx += f" [currency: {currency}]"
         super().__init__(
-            f"Reconciliation failed: {rule}\n"
-            f"  Expected: {expected:,.2f}\n"
-            f"  Actual:   {actual:,.2f}\n"
-            f"  Difference: {difference:,.2f}\n"
-            f"  Tolerance: {tolerance}"
+            f"Reconciliation failed{ctx}: {rule}\n"
+            f"  Expected:   {expected:,.4f}\n"
+            f"  Actual:     {actual:,.4f}\n"
+            f"  Difference: {difference:,.4f}\n"
+            f"  Tolerance:  {tolerance}\n"
+            f"Check that all sections are included and expense/cost values are negative."
         )
 
 
 class NullValueError(FinFlowError):
     """Raised when null values are found in required fields."""
 
-    pass
+    def __init__(self, column: str, accounts: list[str] | None = None):
+        self.column = column
+        self.accounts = accounts or []
+        msg = f"Column '{column}' contains null values."
+        if self.accounts:
+            msg += f" Affected accounts: {', '.join(self.accounts[:10])}"
+            if len(self.accounts) > 10:
+                msg += f" ... ({len(self.accounts) - 10} more)"
+        super().__init__(msg)
 
 
 class DuplicateAccountError(FinFlowError):
     """Raised when duplicate accounts are detected."""
 
-    pass
+    def __init__(self, accounts: list[str] | None = None):
+        self.accounts = accounts or []
+        msg = "Duplicate account names detected."
+        if self.accounts:
+            msg += f" Duplicates: {', '.join(self.accounts)}."
+        msg += " Account names must be unique within a single period."
+        super().__init__(msg)
 
 
 class InvalidColorError(FinFlowError):

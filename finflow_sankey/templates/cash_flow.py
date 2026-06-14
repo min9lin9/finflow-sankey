@@ -15,6 +15,9 @@ class CashFlowStatementTemplate(StatementTemplate):
 
     statement_type = "cash_flow_statement"
 
+    def __init__(self, layout: str | None = None):
+        self.layout = layout
+
     def required_roles(self) -> set[str]:
         return {"beginning_cash", "ending_cash"}
 

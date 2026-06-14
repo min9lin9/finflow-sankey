@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-06-14
+
+### Added
+- `layout` parameter support for all statement constructors (`cash_flow_statement`, `balance_sheet_reconciliation`, `multi_period_compare`).
+- More helpful error messages for `PeriodMismatchError`, `CurrencyMismatchError`, `NullValueError`, `DuplicateAccountError`, `MissingAccountError`, and `ReconciliationError`.
+- `section_hint` in `MissingAccountError` to guide users to the expected section.
+
+### Changed
+- All `StatementTemplate` subclasses now accept `layout` in `__init__` for API consistency.
+- Improved validator exception constructors to include context (periods, currencies, affected accounts).
+
 ## [0.2.0] - 2026-06-14
 
 ### Added

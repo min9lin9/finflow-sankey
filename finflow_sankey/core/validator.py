@@ -49,12 +49,14 @@ class FinancialValidator:
         if self.statement_type == "multi_period_comparison":
             if len(periods) != 2:
                 raise PeriodMismatchError(
-                    f"Multi-period comparison requires exactly 2 periods, got: {periods}"
+                    periods=periods,
+                    context="multi_period_compare()",
                 )
             return df
         if len(periods) > 1:
             raise PeriodMismatchError(
-                f"Multiple periods detected: {periods}. Use a single period per Sankey."
+                periods=periods,
+                context=self.statement_type,
             )
         return df
 
@@ -62,16 +64,19 @@ class FinancialValidator:
         currencies = df["currency"].unique().to_list()
         if len(currencies) > 1:
             raise CurrencyMismatchError(
-                f"Multiple currencies detected: {currencies}. Use a single currency per Sankey."
+                currencies=currencies,
+                context=self.statement_type,
             )
         return df
 
     def _validate_nulls(self, df: pl.DataFrame) -> pl.DataFrame:
         required_cols = ["account", "value", "period", "currency"]
         for col in required_cols:
-            null_count = df[col].is_null().sum()
+            null_rows = df.filter(df[col].is_null())
+            null_count = len(null_rows)
             if null_count > 0:
-                raise NullValueError(f"Column '{col}' contains {null_count} null values.")
+                accounts = null_rows["account"].unique().to_list()
+                raise NullValueError(column=col, accounts=accounts)
         return df
 
     def _validate_duplicates(self, df: pl.DataFrame) -> pl.DataFrame:
@@ -79,9 +84,7 @@ class FinancialValidator:
             return df
         duplicates = df.filter(df["account"].is_duplicated())["account"].unique().to_list()
         if duplicates:
-            raise DuplicateAccountError(
-                f"Duplicate accounts detected: {', '.join(duplicates)}"
-            )
+            raise DuplicateAccountError(accounts=duplicates)
         return df
 
     def _validate_required_roles(self, df: pl.DataFrame, required_roles: set[str]) -> None:
@@ -99,12 +102,26 @@ class FinancialValidator:
         available_roles = {section_role_map.get(s, s) for s in available_sections}
         missing = required_roles - available_roles
         if missing:
-            available_accounts = df["account"].unique().to_list()
+            role = list(missing)[0]
+            section_hint = self._section_hint_for_role(role)
             raise MissingAccountError(
-                role=list(missing)[0],
+                role=role,
                 statement=self.statement_type,
-                available=available_accounts,
+                available=sorted(available_sections | set(df["account"].unique().to_list())),
+                section_hint=section_hint,
             )
+
+    def _section_hint_for_role(self, role: str) -> str | None:
+        hints = {
+            "revenue": "revenue",
+            "profit": "profit",
+            "beginning_cash": "beginning_cash",
+            "ending_cash": "ending_cash",
+            "asset": "asset",
+            "liability": "liability",
+            "equity": "equity",
+        }
+        return hints.get(role)
 
     def _validate_income_statement(self, df: pl.DataFrame, tolerance: float) -> None:
         """Validate Revenue + Expenses = Profit relationships.

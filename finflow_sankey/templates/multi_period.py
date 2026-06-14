@@ -19,6 +19,9 @@ class MultiPeriodComparisonTemplate(StatementTemplate):
 
     statement_type = "multi_period_comparison"
 
+    def __init__(self, layout: str | None = None):
+        self.layout = layout
+
     def required_roles(self) -> set[str]:
         return set()
 

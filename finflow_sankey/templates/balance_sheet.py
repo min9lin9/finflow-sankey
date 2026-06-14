@@ -15,6 +15,9 @@ class BalanceSheetReconciliationTemplate(StatementTemplate):
 
     statement_type = "balance_sheet_reconciliation"
 
+    def __init__(self, layout: str | None = None):
+        self.layout = layout
+
     def required_roles(self) -> set[str]:
         # Require at least one asset, one liability, and equity sections.
         # Users can provide aggregate "asset"/"liability" or detailed sections.

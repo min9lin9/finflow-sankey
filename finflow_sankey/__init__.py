@@ -44,17 +44,19 @@ class FinancialSankey:
         period: str | None = None,
         currency: str | None = None,
         mapping: AccountMapper | dict[str, Any] | str | Path | None = None,
+        layout: str | None = None,
     ) -> SankeyPipeline:
         """Create a cash flow statement Sankey pipeline."""
         from finflow_sankey.templates.cash_flow import CashFlowStatementTemplate
 
-        template = CashFlowStatementTemplate()
+        template = CashFlowStatementTemplate(layout=layout)
         return SankeyPipeline(
             data=data,
             template=template,
             period=period,
             currency=currency,
             mapping=mapping,
+            layout=layout,
         )
 
     @classmethod
@@ -65,17 +67,19 @@ class FinancialSankey:
         as_of: str | None = None,
         currency: str | None = None,
         mapping: AccountMapper | dict[str, Any] | str | Path | None = None,
+        layout: str | None = None,
     ) -> SankeyPipeline:
         """Create a balance sheet reconciliation Sankey pipeline."""
         from finflow_sankey.templates.balance_sheet import BalanceSheetReconciliationTemplate
 
-        template = BalanceSheetReconciliationTemplate()
+        template = BalanceSheetReconciliationTemplate(layout=layout)
         return SankeyPipeline(
             data=data,
             template=template,
             period=as_of,
             currency=currency,
             mapping=mapping,
+            layout=layout,
         )
 
     @classmethod
@@ -85,17 +89,19 @@ class FinancialSankey:
         *,
         currency: str | None = None,
         mapping: AccountMapper | dict[str, Any] | str | Path | None = None,
+        layout: str | None = None,
     ) -> SankeyPipeline:
         """Create a multi-period comparison Sankey pipeline."""
         from finflow_sankey.templates.multi_period import MultiPeriodComparisonTemplate
 
-        template = MultiPeriodComparisonTemplate()
+        template = MultiPeriodComparisonTemplate(layout=layout)
         return SankeyPipeline(
             data=data,
             template=template,
             period=None,
             currency=currency,
             mapping=mapping,
+            layout=layout,
         )
 
 
