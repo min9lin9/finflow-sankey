@@ -160,6 +160,12 @@ Full documentation is available at [https://min9lin9.github.io/finflow-sankey/](
 
 See [ROADMAP.md](ROADMAP.md) for planned features and the path to v1.0.
 
+## Community
+
+- [GitHub Discussions](https://github.com/min9lin9/finflow-sankey/discussions) for questions and usage help
+- [Issue Templates](https://github.com/min9lin9/finflow-sankey/issues/new/choose) for bugs and feature requests
+- [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines
+
 ## Development
 
 ```bash
