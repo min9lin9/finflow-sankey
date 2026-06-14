@@ -105,6 +105,37 @@ def build_reference_income_statement(df: pl.DataFrame) -> FinancialGraph:
         step = (end - start) / (count - 1)
         return [start + i * step for i in range(count)]
 
+    def weighted_spread(values: list[float], start: float, end: float, min_gap: float = 0.06) -> list[float]:
+        """Distribute y positions weighted by value, ensuring a minimum gap."""
+        if not values:
+            return []
+        if len(values) == 1:
+            return [(start + end) / 2]
+
+        total = max(sum(values), 1e-9)
+        weights = [max(v, total * 0.02) / total for v in values]
+        cumulative = [0.0]
+        for w in weights[:-1]:
+            cumulative.append(cumulative[-1] + w)
+
+        raw_positions = [start + (end - start) * (c + w / 2) for c, w in zip(cumulative, weights)]
+
+        # Enforce minimum gap by iteratively pushing apart overlapping positions
+        for _ in range(10):
+            adjusted = raw_positions[:]
+            for i in range(1, len(adjusted)):
+                gap = adjusted[i] - adjusted[i - 1]
+                if gap < min_gap:
+                    push = (min_gap - gap) / 2
+                    adjusted[i - 1] = max(start, adjusted[i - 1] - push)
+                    adjusted[i] = min(end, adjusted[i] + push)
+            if adjusted == raw_positions:
+                break
+            raw_positions = adjusted
+
+        # Clip to bounds
+        return [max(start, min(end, p)) for p in raw_positions]
+
     # Revenue detail nodes
     revenue_df = df.filter(df["section"] == "revenue")
     has_revenue_details = len(revenue_df) > 1
@@ -120,7 +151,8 @@ def build_reference_income_statement(df: pl.DataFrame) -> FinancialGraph:
         0.48,
     )
     if has_revenue_details:
-        y_positions = spread_y(len(revenue_df), 0.36, 0.66)
+        revenue_values = [float(row["sankey_value"]) for row in revenue_df.iter_rows(named=True)]
+        y_positions = weighted_spread(revenue_values, 0.30, 0.66)
         for index, row in enumerate(revenue_df.iter_rows(named=True)):
             node_id = f"revenue_detail_{index}"
             account = str(row["account"])
@@ -185,7 +217,8 @@ def build_reference_income_statement(df: pl.DataFrame) -> FinancialGraph:
 
         opex_df = df.filter(pl.col("section").is_in(["operating_expenses", "expense"]))
         if len(opex_df) > 1:
-            y_positions = spread_y(len(opex_df), 0.46, 0.78)
+            opex_values = [float(row["sankey_value"]) for row in opex_df.iter_rows(named=True)]
+            y_positions = weighted_spread(opex_values, 0.46, 0.86)
             for index, row in enumerate(opex_df.iter_rows(named=True)):
                 node_id = f"operating_expense_detail_{index}"
                 account = str(row["account"])

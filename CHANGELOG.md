@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-14
+
+### Added
+- Rendering performance benchmarks (`tests/benchmarks/test_render_performance.py`).
+- Additional edge case tests: multi-period compare, mapping, group_minor, null values (16 tests total in `tests/test_edge_cases.py`).
+
+### Changed
+- Reference layout y-position distribution is now weighted by value with a minimum gap, reducing label collisions.
+- `NullValueError` handles non-string account values gracefully.
+
 ## [0.2.1] - 2026-06-14
 
 ### Added

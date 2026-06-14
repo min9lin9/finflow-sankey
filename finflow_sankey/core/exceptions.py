@@ -123,7 +123,8 @@ class NullValueError(FinFlowError):
         self.accounts = accounts or []
         msg = f"Column '{column}' contains null values."
         if self.accounts:
-            msg += f" Affected accounts: {', '.join(self.accounts[:10])}"
+            account_strs = [str(a) for a in self.accounts[:10]]
+            msg += f" Affected accounts: {', '.join(account_strs)}"
             if len(self.accounts) > 10:
                 msg += f" ... ({len(self.accounts) - 10} more)"
         super().__init__(msg)

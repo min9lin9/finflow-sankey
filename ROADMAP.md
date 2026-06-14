@@ -62,10 +62,10 @@ FinFlow Sankey follows [Semantic Versioning](https://semver.org/lang/ko/).
 
 **Goal**: Reach production confidence through edge-case handling and performance.
 
-- [ ] Edge case test suite (zero values, missing sections, negative values, extreme ratios)
-- [ ] Rendering performance benchmarks
-- [ ] Grouping and aggregation helpers for large account lists
-- [ ] Better label collision handling for reference layout
+- [x] Edge case test suite (zero values, missing sections, negative values, extreme ratios)
+- [x] Rendering performance benchmarks
+- [x] Grouping and aggregation helpers for large account lists
+- [x] Better label collision handling for reference layout
 
 ---
 
