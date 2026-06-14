@@ -1,0 +1,6 @@
+account,value,period,currency,statement,section
+Revenue,100000000.0,FY2025,USD,income_statement,revenue
+Cost of Revenue,-40000000.0,FY2025,USD,income_statement,cost_of_revenue
+Operating Expenses,-30000000.0,FY2025,USD,income_statement,operating_expenses
+Tax,-10000000.0,FY2025,USD,income_statement,tax
+Net Income,20000000.0,FY2025,USD,income_statement,profit

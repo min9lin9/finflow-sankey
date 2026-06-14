@@ -23,6 +23,8 @@ theme:
 nav:
   - Home: index.md
   - Quickstart: quickstart.md
+  - Account Mapping: mapping.md
+  - FAQ: faq.md
   - API Reference: api.md
   - Themes & Palettes: themes.md
   - Validation: validation.md
