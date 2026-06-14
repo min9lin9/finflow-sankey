@@ -23,6 +23,7 @@ theme:
 nav:
   - Home: index.md
   - Quickstart: quickstart.md
+  - Data Adapters: adapters.md
   - Account Mapping: mapping.md
   - FAQ: faq.md
   - API Reference: api.md

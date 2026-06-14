@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-06-14
+
+### Added
+- `finflow_sankey.adapters` package:
+  - `load_income_statement_csv`, `load_cash_flow_csv`, `load_balance_sheet_csv`
+  - `load_income_statement_excel`, `load_cash_flow_excel`, `load_balance_sheet_excel`
+  - `DartlabAdapter` for Dartlab CLI data
+  - `DartFssAdapter` for DART OpenAPI (`dart-fss`)
+- `docs/adapters.md` guide.
+- `tests/test_adapters.py` (6 tests).
+
 ## [0.1.16] - 2026-06-14
 
 ### Added

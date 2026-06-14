@@ -148,6 +148,48 @@ FinancialSankey.income_statement(df).validate().export_html(
 )
 ```
 
+## Data Adapters
+
+### CSV
+
+```python
+from finflow_sankey.adapters import load_income_statement_csv
+
+df = load_income_statement_csv("data.csv", period="FY2025", currency="USD")
+FinancialSankey.income_statement(df).validate().render()
+```
+
+### Excel
+
+```python
+from finflow_sankey.adapters import load_income_statement_excel
+
+df = load_income_statement_excel("data.xlsx", sheet_name="IS", period="FY2025", currency="USD")
+FinancialSankey.income_statement(df).validate().render()
+```
+
+### Dartlab CLI
+
+```python
+from finflow_sankey.adapters import DartlabAdapter
+
+adapter = DartlabAdapter("005930")
+df = adapter.load_income_statement()
+FinancialSankey.income_statement(df).validate().render()
+```
+
+### DART OpenAPI (dart-fss)
+
+```python
+from finflow_sankey.adapters.dart_fss import DartFssAdapter
+
+adapter = DartFssAdapter(corp_code="00126380")
+df = adapter.load_income_statement()
+FinancialSankey.income_statement(df).validate().render()
+```
+
+Requires `DART_API_KEY` environment variable and `pip install dart-fss`.
+
 ## Real-World Data
 
 See [`examples/dartlab_integration.py`](examples/dartlab_integration.py) for fetching live Samsung Electronics data via [Dartlab CLI](https://github.com/eddmpython/dartlab).

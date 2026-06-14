@@ -45,10 +45,10 @@ FinFlow Sankey follows [Semantic Versioning](https://semver.org/lang/ko/).
 
 ### 0.2.1 — Data Adapters
 
-- [ ] `from_csv()` helper for simple CSV files
-- [ ] `from_excel()` helper for Excel workbooks
-- [ ] `DartlabAdapter` class wrapping Dartlab CLI
-- [ ] `DartFssAdapter` class wrapping `dart-fss`
+- [x] `load_*_csv()` helpers for simple CSV files
+- [x] `load_*_excel()` helpers for Excel workbooks
+- [x] `DartlabAdapter` class wrapping Dartlab CLI
+- [x] `DartFssAdapter` class wrapping `dart-fss`
 
 ### 0.2.2 — API Consistency
 
