@@ -23,15 +23,17 @@ class FinancialSankey:
         period: str | None = None,
         currency: str | None = None,
         mapping: AccountMapper | dict[str, Any] | str | Path | None = None,
+        layout: str | None = None,
     ) -> SankeyPipeline:
         """Create an income statement Sankey pipeline."""
-        template = IncomeStatementTemplate()
+        template = IncomeStatementTemplate(layout=layout)
         return SankeyPipeline(
             data=data,
             template=template,
             period=period,
             currency=currency,
             mapping=mapping,
+            layout=layout,
         )
 
     @classmethod

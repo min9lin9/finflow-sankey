@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 import polars as pl
 
@@ -15,7 +16,7 @@ class StatementTemplate(ABC):
     statement_type: str = ""
 
     @abstractmethod
-    def build(self, df: pl.DataFrame) -> FinancialGraph:
+    def build(self, df: pl.DataFrame, **kwargs: Any) -> FinancialGraph:
         """Build a FinancialGraph from normalized data."""
         pass
 

@@ -25,7 +25,7 @@ semantic:
   border: "#CBD5E1"
   link_opacity: 0.55
   hover_opacity: 0.9
-  node_border_width: 1.5
+  node_border_width: 0
   link_border_width: 0
   node_thickness: 28
   font_family: "Inter, Pretendard, Arial, sans-serif"

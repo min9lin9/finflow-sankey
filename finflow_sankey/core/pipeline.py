@@ -30,12 +30,14 @@ class SankeyPipeline:
         currency: str | None = None,
         default_palette: ColorPalette | None = None,
         mapping: AccountMapper | dict | str | Path | None = None,
+        layout: str | None = None,
     ):
         self._lf = self._to_lazy_frame(data)
         self.template = template
         self.period = period
         self.currency = currency
         self.default_palette = default_palette
+        self.layout = layout
         self._mapper = self._resolve_mapper(mapping)
         self._validated_df: pl.DataFrame | None = None
         self._graph: FinancialGraph | None = None
@@ -206,7 +208,7 @@ class SankeyPipeline:
         if self._validated_df is None:
             self.validate()
 
-        graph = self.template.build(self._validated_df)
+        graph = self.template.build(self._validated_df, layout=self.layout)
 
         resolved_palette = self._resolve_palette(palette, theme)
 
@@ -291,5 +293,5 @@ class SankeyPipeline:
         if self._graph is None:
             if self._validated_df is None:
                 self.validate()
-            self._graph = self.template.build(self._validated_df)
+            self._graph = self.template.build(self._validated_df, layout=self.layout)
         return self._graph

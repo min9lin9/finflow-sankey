@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import polars as pl
 
 from finflow_sankey.core.graph import FinancialGraph, SankeyLink, SankeyNode
@@ -18,7 +20,7 @@ class BalanceSheetReconciliationTemplate(StatementTemplate):
         # Users can provide aggregate "asset"/"liability" or detailed sections.
         return {"asset", "liability", "equity"}
 
-    def build(self, df: pl.DataFrame) -> FinancialGraph:
+    def build(self, df: pl.DataFrame, **kwargs: Any) -> FinancialGraph:
         """
         Build balance sheet reconciliation Sankey.
 

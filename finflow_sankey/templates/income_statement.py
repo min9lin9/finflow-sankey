@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import polars as pl
 
 from finflow_sankey.core.graph import FinancialGraph, SankeyLink, SankeyNode
@@ -13,10 +15,22 @@ class IncomeStatementTemplate(StatementTemplate):
 
     statement_type = "income_statement"
 
+    def __init__(self, layout: str | None = None):
+        self.layout = layout
+
     def required_roles(self) -> set[str]:
         return {"revenue", "profit"}
 
-    def build(self, df: pl.DataFrame) -> FinancialGraph:
+    def build(self, df: pl.DataFrame, **kwargs: Any) -> FinancialGraph:
+        layout = kwargs.get("layout") or self.layout
+        if layout == "reference":
+            from finflow_sankey.templates._income_reference import build_reference_income_statement
+
+            return build_reference_income_statement(df)
+
+        return self._build_standard(df)
+
+    def _build_standard(self, df: pl.DataFrame) -> FinancialGraph:
         """
         Build income statement Sankey.
 

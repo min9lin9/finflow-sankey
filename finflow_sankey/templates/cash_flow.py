@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import polars as pl
 
 from finflow_sankey.core.graph import FinancialGraph, SankeyLink, SankeyNode
@@ -16,7 +18,7 @@ class CashFlowStatementTemplate(StatementTemplate):
     def required_roles(self) -> set[str]:
         return {"beginning_cash", "ending_cash"}
 
-    def build(self, df: pl.DataFrame) -> FinancialGraph:
+    def build(self, df: pl.DataFrame, **kwargs: Any) -> FinancialGraph:
         """
         Build cash flow statement Sankey.
 

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import polars as pl
 
 from finflow_sankey.core.graph import FinancialGraph, SankeyLink, SankeyNode
@@ -20,7 +22,7 @@ class MultiPeriodComparisonTemplate(StatementTemplate):
     def required_roles(self) -> set[str]:
         return set()
 
-    def build(self, df: pl.DataFrame) -> FinancialGraph:
+    def build(self, df: pl.DataFrame, **kwargs: Any) -> FinancialGraph:
         """Build multi-period comparison Sankey."""
         periods = sorted(df["period"].unique().to_list())
         if len(periods) != 2:
