@@ -36,3 +36,11 @@ markdown_extensions:
 
 plugins:
   - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [finflow_sankey]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
