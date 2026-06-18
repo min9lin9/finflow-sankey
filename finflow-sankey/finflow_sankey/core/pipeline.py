@@ -9,6 +9,7 @@ import polars as pl
 from plotly.graph_objects import Figure
 
 from finflow_sankey.core.graph import FinancialGraph
+from finflow_sankey.core.grouping import group_by_threshold, group_by_top_n
 from finflow_sankey.core.mapper import AccountMapper
 from finflow_sankey.core.normalizer import SignNormalizer, UnitNormalizer
 from finflow_sankey.core.palette import ColorPalette, get_palette
@@ -104,90 +105,17 @@ class SankeyPipeline:
         if min_pct is not None and min_value is not None:
             total = df["sankey_value"].sum()
             threshold = max(total * min_pct, min_value)
-            df = self._group_by_threshold(df, threshold, label)
+            df = group_by_threshold(df, threshold, label)
         elif min_pct is not None:
             total = df["sankey_value"].sum()
-            df = self._group_by_threshold(df, total * min_pct, label)
+            df = group_by_threshold(df, total * min_pct, label)
         elif min_value is not None:
-            df = self._group_by_threshold(df, min_value, label)
+            df = group_by_threshold(df, min_value, label)
         elif top_n is not None:
-            df = self._group_by_top_n(df, top_n, label)
+            df = group_by_top_n(df, top_n, label)
 
         self._validated_df = df
         return self
-
-    def _group_by_threshold(
-        self, df: pl.DataFrame, threshold: float, label: str
-    ) -> pl.DataFrame:
-        threshold = max(threshold, 0.0)
-
-        df = df.with_columns(
-            pl.when(pl.col("sankey_value") < threshold)
-            .then(pl.lit(label))
-            .otherwise(pl.col("account"))
-            .alias("account_group")
-        )
-
-        grouped = df.group_by(["account_group", "section"]).agg(
-            pl.col("value").sum().alias("value"),
-            pl.col("sankey_value").sum().alias("sankey_value"),
-            pl.col("display_value").sum().alias("display_value"),
-            pl.col("period").first().alias("period"),
-            pl.col("currency").first().alias("currency"),
-            pl.col("statement").first().alias("statement"),
-            pl.col("account").alias("original_accounts"),
-        )
-
-        grouped = self._finalize_group_label(grouped, label)
-        return grouped
-
-    def _group_by_top_n(self, df: pl.DataFrame, top_n: int, label: str) -> pl.DataFrame:
-        if top_n <= 0:
-            raise ValueError("top_n must be a positive integer.")
-
-        sorted_df = df.sort("sankey_value", descending=True)
-        top_accounts = sorted_df.head(top_n)["account"].to_list()
-
-        df = df.with_columns(
-            pl.when(pl.col("account").is_in(top_accounts))
-            .then(pl.col("account"))
-            .otherwise(pl.lit(label))
-            .alias("account_group")
-        )
-
-        grouped = df.group_by(["account_group", "section"]).agg(
-            pl.col("value").sum().alias("value"),
-            pl.col("sankey_value").sum().alias("sankey_value"),
-            pl.col("display_value").sum().alias("display_value"),
-            pl.col("period").first().alias("period"),
-            pl.col("currency").first().alias("currency"),
-            pl.col("statement").first().alias("statement"),
-            pl.col("account").alias("original_accounts"),
-        )
-
-        grouped = self._finalize_group_label(grouped, label)
-        return grouped
-
-    def _finalize_group_label(self, grouped: pl.DataFrame, label: str) -> pl.DataFrame:
-        """Add is_grouped flag and set account label with count for grouped rows."""
-        grouped = grouped.with_columns(
-            pl.when(pl.col("account_group") == label)
-            .then(True)
-            .otherwise(False)
-            .alias("is_grouped"),
-        )
-
-        grouped = grouped.with_columns(
-            pl.when(pl.col("is_grouped"))
-            .then(
-                pl.lit(f"{label} (")
-                + pl.col("original_accounts").list.len().cast(pl.Utf8)
-                + pl.lit(" accounts)")
-            )
-            .otherwise(pl.col("account_group"))
-            .alias("account")
-        )
-        return grouped
 
     def with_palette(
         self,
@@ -222,7 +150,7 @@ class SankeyPipeline:
         renderer: str = "plotly",
         palette: str | Path | dict[str, Any] | ColorPalette | None = None,
         theme: str | None = None,
-        **render_kwargs,
+        **render_kwargs: Any,
     ) -> str:
         """Render and export the Sankey graph to HTML.
 

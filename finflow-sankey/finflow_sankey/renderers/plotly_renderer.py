@@ -7,6 +7,10 @@ import plotly.graph_objects as go
 from finflow_sankey.core.graph import FinancialGraph, SankeyNode
 from finflow_sankey.core.palette import ColorPalette, hex_to_rgba
 from finflow_sankey.renderers.base import Renderer
+from finflow_sankey.renderers.reference_layout import (
+    add_reference_legend,
+    apply_reference_layout,
+)
 
 
 class PlotlyRenderer(Renderer):
@@ -31,7 +35,8 @@ class PlotlyRenderer(Renderer):
         link_sources = [link.source_idx for link in graph.links]
         link_targets = [link.target_idx for link in graph.links]
         link_values = [link.amount for link in graph.links]
-        link_roles = [self._link_role(graph, link, use_target=True) for link in graph.links]
+        node_role_by_id = {node.node_id: node.role for node in graph.nodes}
+        link_roles = [node_role_by_id.get(link.target, "other") for link in graph.links]
         link_colors = [
             hex_to_rgba(palette.get_role_color(role), palette.semantic.link_opacity)
             for role in link_roles
@@ -77,40 +82,27 @@ class PlotlyRenderer(Renderer):
 
     def _build_node_x(self, graph: FinancialGraph) -> list[float]:
         """Compute x positions based on explicit node.x or node levels."""
-        if not graph.nodes:
-            return []
-
-        # If any node has explicit x, use it; otherwise derive from level
         has_explicit_x = any(node.x is not None for node in graph.nodes)
         if has_explicit_x:
             return [node.x if node.x is not None else 0.0 for node in graph.nodes]
 
-        max_level = max(node.level for node in graph.nodes)
+        max_level = max((node.level for node in graph.nodes), default=0)
         if max_level == 0:
             return [0.0] * len(graph.nodes)
         return [node.level / max_level for node in graph.nodes]
 
     def _build_node_y(self, graph: FinancialGraph) -> list[float]:
         """Use explicit node.y when available, otherwise let Plotly auto-place."""
-        if not graph.nodes:
-            return []
         has_explicit_y = any(node.y is not None for node in graph.nodes)
         if not has_explicit_y:
             return []
         return [node.y if node.y is not None else 0.5 for node in graph.nodes]
 
-    def _link_role(self, graph: FinancialGraph, link, use_target: bool = False) -> str:
-        node_id = link.target if use_target else link.source
-        for node in graph.nodes:
-            if node.node_id == node_id:
-                return node.role
-        return "other"
-
     def _build_node_hover(self, graph: FinancialGraph) -> list[str]:
         total_revenue = graph.get_role_amount("revenue") or graph.get_role_amount("cash_balance") or 1.0
         hover_texts = []
         for node in graph.nodes:
-            share = (node.amount / total_revenue) * 100 if total_revenue else 0.0
+            share = (node.amount / total_revenue) * 100
             accounts = node.metadata.get("original_accounts", [])
             accounts_text = ", ".join(accounts) if accounts else "N/A"
 
@@ -133,7 +125,7 @@ class PlotlyRenderer(Renderer):
         for link in graph.links:
             source_node = graph.nodes[link.source_idx]
             target_node = graph.nodes[link.target_idx]
-            share = (link.amount / total_revenue) * 100 if total_revenue else 0.0
+            share = (link.amount / total_revenue) * 100
             accounts = link.metadata.get("original_accounts", [])
             accounts_text = ", ".join(accounts) if accounts else "N/A"
 
@@ -179,7 +171,7 @@ class PlotlyRenderer(Renderer):
             title_text = f"[Reconciliation View] {title_text}"
 
         if is_reference:
-            self._apply_reference_layout(fig, palette, title_text, graph)
+            apply_reference_layout(fig, palette, title_text, graph)
             return
 
         fig.update_layout(
@@ -206,57 +198,13 @@ class PlotlyRenderer(Renderer):
             width=1300,
         )
 
-    def _apply_reference_layout(
-        self,
-        fig: go.Figure,
-        palette: ColorPalette,
-        title_text: str,
-        graph: FinancialGraph,
-    ) -> None:
-        """Apply reference-style layout: fixed nodes, auto height, grouped legend."""
-        node_count = max(len(graph.nodes), 1)
-        total_revenue = graph.get_role_amount("revenue") or 1.0
-        max_link = max((link.amount for link in graph.links), default=0.0)
-        max_ratio = max_link / total_revenue if total_revenue else 0.0
-
-        height = max(720, 540 + node_count * 34 + int(max_ratio * 180))
-
-        fig.update_layout(
-            title=dict(
-                text=title_text,
-                font=dict(
-                    size=palette.semantic.title_font_size,
-                    color=palette.semantic.text,
-                    family=palette.semantic.font_family,
-                ),
-                x=0.5,
-                xanchor="center",
-            ),
-            font=dict(
-                size=palette.semantic.font_size,
-                color=palette.semantic.text,
-                family=palette.semantic.font_family,
-            ),
-            paper_bgcolor=palette.semantic.background,
-            plot_bgcolor=palette.semantic.plot_background,
-            margin=dict(l=40, r=40, t=90, b=40),
-            showlegend=False,
-            height=height,
-            width=1100,
-        )
-
     def _add_legend(self, fig: go.Figure, palette: ColorPalette, graph: FinancialGraph) -> None:
         if graph.metadata.get("visual_style") == "reference":
-            self._add_reference_legend(fig, palette)
+            add_reference_legend(fig, palette)
             return
 
-        visible_roles = []
-        for node in graph.nodes:
-            if node.role not in visible_roles:
-                visible_roles.append(node.role)
-
         annotations = []
-        for i, role in enumerate(visible_roles):
+        for i, role in enumerate(dict.fromkeys(node.role for node in graph.nodes)):
             color = palette.get_role_color(role)
             label = role.replace("_", " ").title()
             annotations.append(
@@ -276,33 +224,5 @@ class PlotlyRenderer(Renderer):
                 )
             )
 
-        if annotations:
-            fig.update_layout(annotations=annotations)
-
-    def _add_reference_legend(self, fig: go.Figure, palette: ColorPalette) -> None:
-        """Grouped legend for reference income statement layout."""
-        items = [
-            ("Revenue", palette.roles.revenue),
-            ("Profit", palette.roles.profit),
-            ("Expense", palette.roles.operating_expenses),
-        ]
-        annotations = []
-        for i, (label, color) in enumerate(items):
-            annotations.append(
-                dict(
-                    x=0.02,
-                    y=1.02 - i * 0.045,
-                    xref="paper",
-                    yref="paper",
-                    text=f"<span style='color:{color};'>■</span> {label}",
-                    showarrow=False,
-                    font=dict(
-                        size=12,
-                        color=palette.semantic.text,
-                        family=palette.semantic.font_family,
-                    ),
-                    align="left",
-                )
-            )
         if annotations:
             fig.update_layout(annotations=annotations)
