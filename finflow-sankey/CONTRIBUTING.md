@@ -8,8 +8,8 @@ Thank you for your interest in contributing!
 2. Clone your fork:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/finflow-sankey.git
-cd finflow-sankey
+git clone https://github.com/YOUR_USERNAME/finflow-sankey.git finflow-sankey-repo
+cd finflow-sankey-repo/finflow-sankey
 ```
 
 3. Create a virtual environment and install dependencies:
@@ -62,7 +62,7 @@ mkdocs build
 
 ## Reporting Issues
 
-Please use one of the issue templates when filing a bug, feature request, or question.
+Please use GitHub Issues when filing a bug, feature request, or question.
 
 For general questions and usage help, use [GitHub Discussions](https://github.com/min9lin9/finflow-sankey/discussions).
 

@@ -6,13 +6,9 @@ from __future__ import annotations
 class FinFlowError(Exception):
     """Base exception for FinFlow Sankey."""
 
-    pass
-
 
 class SchemaError(FinFlowError):
     """Raised when input schema is invalid."""
-
-    pass
 
 
 class MissingColumnError(SchemaError):
@@ -145,16 +141,10 @@ class DuplicateAccountError(FinFlowError):
 class InvalidColorError(FinFlowError):
     """Raised when an invalid color is provided."""
 
-    pass
-
 
 class MissingRoleColorError(FinFlowError):
     """Raised when a required role color is missing from palette."""
 
-    pass
-
 
 class InvalidOpacityError(FinFlowError):
     """Raised when opacity is out of valid range."""
-
-    pass

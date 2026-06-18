@@ -52,8 +52,4 @@ class FinancialGraph:
         raise KeyError(f"Node '{node_id}' not found.")
 
     def get_role_amount(self, role: str) -> float:
-        total = 0.0
-        for node in self.nodes:
-            if node.role == role:
-                total += node.amount
-        return total
+        return sum((node.amount for node in self.nodes if node.role == role), 0.0)

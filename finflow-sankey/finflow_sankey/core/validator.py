@@ -103,25 +103,22 @@ class FinancialValidator:
         missing = required_roles - available_roles
         if missing:
             role = list(missing)[0]
-            section_hint = self._section_hint_for_role(role)
+            hint_roles = {
+                "revenue",
+                "profit",
+                "beginning_cash",
+                "ending_cash",
+                "asset",
+                "liability",
+                "equity",
+            }
+            section_hint = role if role in hint_roles else None
             raise MissingAccountError(
                 role=role,
                 statement=self.statement_type,
                 available=sorted(available_sections | set(df["account"].unique().to_list())),
                 section_hint=section_hint,
             )
-
-    def _section_hint_for_role(self, role: str) -> str | None:
-        hints = {
-            "revenue": "revenue",
-            "profit": "profit",
-            "beginning_cash": "beginning_cash",
-            "ending_cash": "ending_cash",
-            "asset": "asset",
-            "liability": "liability",
-            "equity": "equity",
-        }
-        return hints.get(role)
 
     def _validate_income_statement(self, df: pl.DataFrame, tolerance: float) -> None:
         """Validate Revenue + Expenses = Profit relationships.

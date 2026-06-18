@@ -2,7 +2,6 @@
 
 [![PyPI version](https://badge.fury.io/py/finflow-sankey.svg)](https://pypi.org/project/finflow-sankey/)
 [![Python](https://img.shields.io/pypi/pyversions/finflow-sankey.svg)](https://pypi.org/project/finflow-sankey/)
-[![Tests](https://github.com/min9lin9/finflow-sankey/actions/workflows/ci.yml/badge.svg)](https://github.com/min9lin9/finflow-sankey/actions)
 [![Docs](https://img.shields.io/badge/docs-mkdocs-blue.svg)](https://min9lin9.github.io/finflow-sankey/)
 
 Polars-first financial statement Sankey visualization library.
@@ -205,29 +204,27 @@ See [ROADMAP.md](ROADMAP.md) for planned features and the path to v1.0.
 ## Community
 
 - [GitHub Discussions](https://github.com/min9lin9/finflow-sankey/discussions) for questions and usage help
-- [Issue Templates](https://github.com/min9lin9/finflow-sankey/issues/new/choose) for bugs and feature requests
+- [GitHub Issues](https://github.com/min9lin9/finflow-sankey/issues) for bugs and feature requests
 - [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines
 
 ## Development
 
 ```bash
-pip install -e ".[dev]"
+cd finflow-sankey
+pip install -e ".[dev,docs]"
 python -m pytest tests/ -q
 ruff check finflow_sankey tests
+mkdocs build
 ```
 
 ## Project Structure
 
 ```
-finflow_sankey/
-  core/           # schema, validation, normalization, graph, palette, mapper
-  templates/      # income_statement, cash_flow, balance_sheet, multi_period
-  renderers/      # plotly renderer
-  palettes/       # YAML color palettes
-  mappings/       # YAML account mappings
-  examples/       # usage examples
-tests/            # pytest suite
-docs/             # mkdocs documentation
+finflow-sankey/
+  finflow_sankey/  # package source
+  tests/           # pytest suite
+  docs/            # mkdocs documentation
+  examples/        # usage examples
 ```
 
 ## License
