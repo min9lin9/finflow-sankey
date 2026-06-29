@@ -30,11 +30,17 @@ Date: 2026-06-29
 
 ## PR / Merge Handoff Status
 
-Automatic PR/merge was not safe from this worktree. The root repository currently contains broad unrelated staged renames/deletions and untracked directories outside the audited slices, including the large `finflow-sankey/` relocation state and `steady-n-wise/` as an untracked project directory.
+Automatic PR/merge from the dirty root worktree was not safe. The root repository currently contains broad unrelated staged renames/deletions and untracked directories outside the audited slices, including the large `finflow-sankey/` relocation state and `steady-n-wise/` as an untracked project directory.
+
+An isolated worktree/branch was created for the `steady-n-wise` slice only:
+
+- Worktree: `.worktrees/steady-n-wise-finance-os`
+- Branch: `codex/steady-n-wise-finance-os`
+- Commit: `e2f2a243 feat: add steady n wise finance dashboard MVP`
+- Draft PR: https://github.com/min9lin9/finflow-sankey/pull/4
 
 Safe handoff path:
 
-1. Create a clean branch/worktree from the intended base.
-2. Commit `steady-n-wise/` as its own project slice.
-3. Commit the reviewed `finflow-sankey/` cleanup separately from the relocation if that relocation is user-owned.
-4. Open PRs from those isolated commits.
+1. Review and merge PR #4 for `steady-n-wise`.
+2. Commit the reviewed `finflow-sankey/` cleanup separately from the relocation if that relocation is user-owned.
+3. Open a separate PR for the isolated `finflow-sankey` cleanup.
