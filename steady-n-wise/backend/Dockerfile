@@ -1,0 +1,8 @@
+FROM oven/bun:1
+
+WORKDIR /app
+COPY package.json tsconfig.json ./
+COPY src ./src
+RUN bun install --frozen-lockfile || bun install
+EXPOSE 3000
+CMD ["bun", "src/index.ts"]

@@ -1,0 +1,27 @@
+Date: 2026-06-29
+
+Implemented foundation and first vertical slice:
+- Docker Compose services: redis, data-service, backend, frontend
+- DESIGN.md before frontend code
+- FastAPI data-service with search and supply-analysis endpoints
+- Bun/Elysia backend gateway with Redis cache and single-flight wrapper
+- React/Vite dashboard first screen with search, period controls, and ECharts overlay
+
+Verification:
+- docker compose config: passed
+- data-service: `uv run pytest && uv run ruff check . && uv run basedpyright` passed; 5 tests passed
+- backend: `bun install --frozen-lockfile && bun test && bun run typecheck` passed; 3 tests passed
+- frontend: `bun install --frozen-lockfile && bun test && bun run typecheck && bun run build` passed; 2 tests passed
+- AST parse: 59 Python files parsed across `steady-n-wise` and `finflow-sankey`
+- finflow-sankey regression: `.venv/bin/python -m pytest tests/ -q` passed; 57 tests passed
+- finflow-sankey ruff and py_compile passed
+- docker compose up --build -d: services started; redis, data-service, backend healthy
+- GET /health: 200, redis connected
+- GET /api/v1/stocks/search?q=삼성: returned 005930 삼성전자
+- GET /api/v1/stocks/005930/supply-analysis?start=2026-01-02&end=2026-01-16: returned 005930, 2026-01-02 through 2026-01-16, 11 rows
+- Playwright screenshot desktop current-state QA: /tmp/steady-n-wise-dashboard-current.png
+- Earlier responsive screenshot evidence: /tmp/steady-n-wise-dashboard-mobile.png
+
+Handoff note:
+- Root git state is not safe for an automatic PR/merge. The repository contains unrelated staged renames/deletions and untracked project directories outside this slice.
+- Safe handoff should isolate `steady-n-wise/`, `.omo/evidence/task-1-foundation.txt`, and the reviewed `finflow-sankey/` cleanup in separate commits or separate worktrees from a clean base.
