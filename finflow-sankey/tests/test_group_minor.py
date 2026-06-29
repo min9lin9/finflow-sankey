@@ -1,6 +1,7 @@
 """Tests for minor grouping."""
 
 import polars as pl
+import pytest
 
 from finflow_sankey import FinancialSankey
 
@@ -57,13 +58,10 @@ def test_group_minor_invalid_top_n():
         "section": ["revenue", "expense", "profit"],
     })
 
-    try:
+    with pytest.raises(ValueError):
         (
             FinancialSankey
             .income_statement(df)
             .validate()
             .group_minor(top_n=0)
         )
-        assert False, "Expected ValueError"
-    except ValueError:
-        pass

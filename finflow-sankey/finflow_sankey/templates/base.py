@@ -18,9 +18,7 @@ class StatementTemplate(ABC):
     @abstractmethod
     def build(self, df: pl.DataFrame, **kwargs: Any) -> FinancialGraph:
         """Build a FinancialGraph from normalized data."""
-        pass
 
     @abstractmethod
     def required_roles(self) -> set[str]:
         """Return required roles for this statement type."""
-        pass

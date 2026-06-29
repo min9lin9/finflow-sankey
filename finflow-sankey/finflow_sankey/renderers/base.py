@@ -14,4 +14,3 @@ class Renderer(ABC):
     @abstractmethod
     def render(self, graph: FinancialGraph, palette: ColorPalette, title: str | None = None):
         """Render a FinancialGraph."""
-        pass
